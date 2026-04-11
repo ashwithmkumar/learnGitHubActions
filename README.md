@@ -1,0 +1,1 @@
+Repository that contains practices exercises for GitHub Actions.
