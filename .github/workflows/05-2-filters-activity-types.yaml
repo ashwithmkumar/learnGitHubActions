@@ -1,0 +1,14 @@
+name: 05 - 2 - Event Filters and Activity Types
+on:
+  workflow_dispatch:
+  # pull_request:
+  #   types: [closed]
+  #   branches:losed]
+  #     - main:
+
+jobs:
+  echo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo Pull Request Closed Event
+        run: echo "This workflow runs only for pull request events of type 'closed' targeting the 'main' branch."
