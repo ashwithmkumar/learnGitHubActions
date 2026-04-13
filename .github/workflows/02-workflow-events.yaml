@@ -9,10 +9,10 @@ name: 02 - Workflow Events
 
 # The above is equivalent to the below expanded syntax
 on:
-  push:
-  pull_request:
-  schedule:
-    - cron: '0 0 * * *' # This will run the workflow every day at midnight UTC
+  # push:
+  # pull_request:
+  # schedule:
+  #   - cron: '0 0 * * *' # This will run the workflow every day at midnight UTC
   workflow_dispatch:
 
 # The above is equivalent to the below shorthand syntax
