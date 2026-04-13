@@ -1,10 +1,27 @@
-name: '02 - Workflow Events'
+name: 02 - Workflow Events
+
+# This workflow demonstrates the different events that can trigger a workflow run.
+# on:
+#   - push
+#   - pull_request
+#   - schedule
+#   - workflow_dispatch
+
+# The above is equivalent to the below expanded syntax
 on:
-  - workflow_dispatch
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *' # This will run the workflow every day at midnight UTC
+  workflow_dispatch:
+
+# The above is equivalent to the below shorthand syntax
+# on:
+#   [push, pull_request, schedule, workflow_dispatch]
 
 jobs:
   one-job:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Show the trigger'
+      - name: Show the trigger
         run: echo "This workflow was triggered by the ${{ github.event_name }} event."
