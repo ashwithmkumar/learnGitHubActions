@@ -3,7 +3,6 @@ on:
   - push
   - pull_request
   - schedule
-  - workflow_dispatch
 
 jobs:
   one-job:
