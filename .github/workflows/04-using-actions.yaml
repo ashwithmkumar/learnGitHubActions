@@ -5,6 +5,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 04-using-actions/react-app
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -13,10 +16,16 @@ jobs:
         with:
           node-version: '20.x'
       - name: Install Dependencies
-        working-directory: 04-using-actions/react-app
+        # Sets the working directory for subsequent steps to the react-app subdirectory
+        # This ensures all commands in this job run within the context of the React application,
+        # allowing relative paths and scripts to be executed from the correct location
+        # NOTE: This working-directory configuration can be defined globally at the job level
+        # for better maintainability and to avoid repetition across multiple steps.
+        # working-directory: 04-using-actions/react-app
         run: |
           npm ci
       - name: Run Unit Tests
-        working-directory: 04-using-actions/react-app
+        # Same as above, the working-directory can be set here if not defined at the job level.
+        # working-directory: 04-using-actions/react-app
         run: |
           npm run test
