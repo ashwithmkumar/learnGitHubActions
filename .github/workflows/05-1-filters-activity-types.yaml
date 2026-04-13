@@ -1,0 +1,13 @@
+name: 05 - 1 - Event Filters and Activity Types
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - main
+
+jobs:
+  echo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo Pull Request Event
+        run: echo "This workflow runs only for pull request events of type 'opened' and 'synchronize' targeting the 'main' branch."
