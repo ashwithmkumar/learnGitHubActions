@@ -1,11 +1,23 @@
 name: 06 - Contexts
+run-name: Display GitHub Contexts and Variables | DEBUG - ${{ inputs.debug }}
 on:
   push:
   workflow_dispatch:
-
+    inputs:
+      debug:
+        description: 'Enable debug mode to display additional context information'
+        type: boolean
+        required: false
+        default: false
+env:
+  MY_WORKFLOW_VAR: 'This is a workflow-level environment variable'
+  MY_OVERWRITTEN_VAR: 'This value will be overwritten by a job-level variable'
 jobs:
-  echo-data:
+  echo-data-v1:
     runs-on: ubuntu-latest
+    env:
+      MY_JOB_VAR: 'This is a job-level environment variable'
+      MY_OVERWRITTEN_VAR: 'This value is set at the job level and will overwrite the workflow-level variable'
     steps:
       - name: Display Information
         run: |
@@ -18,3 +30,26 @@ jobs:
           echo "Run number: ${{ github.run_number }}"
       - name: Retrieve Variable
         run: echo "${{ vars.MY_VAR }}"
+      - name: Display Environment Variables v1
+        env:
+          MY_OVERWRITTEN_VAR: 'This value is set at the step level and will overwrite both job-level and workflow-level variables'
+        run: |
+          echo "Workflow-level variable: $MY_WORKFLOW_VAR"
+          echo "Job-level variable: $MY_JOB_VAR"
+          echo "Overwritten variable: $MY_OVERWRITTEN_VAR"
+      - name: Display Environment Variables v2
+        run: |
+          echo "Workflow-level variable: ${{ env.MY_WORKFLOW_VAR }}"
+          echo "Job-level variable: ${{ env.MY_JOB_VAR }}"
+          echo "Overwritten variable: ${{ env.MY_OVERWRITTEN_VAR }}"
+  echo-data-v2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display Environment Variables v3
+        run: |
+          # This step demonstrates accessing environment variables at different scopes
+          # (workflow-level, job-level, and overwritten variables) using shell syntax.
+          # Note: This is another way to access env variables besides using contexts like ${{ env.VARIABLE_NAME }}
+          echo "Workflow-level variable: $MY_WORKFLOW_VAR"
+          echo "Job-level variable: $MY_JOB_VAR"
+          echo "Overwritten variable: $MY_OVERWRITTEN_VAR"
