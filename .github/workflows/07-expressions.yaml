@@ -25,4 +25,4 @@ jobs:
           echo "This workflow was triggered from the main branch."
       - name: Greeting
         run: |
-          echo ""Hello, ${{ github.actor }}! This workflow demonstrates the use of expressions in GitHub Actions."
+          echo "Hello, ${{ github.actor }}! This workflow demonstrates the use of expressions in GitHub Actions."
