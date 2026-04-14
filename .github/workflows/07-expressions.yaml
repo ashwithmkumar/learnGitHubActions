@@ -14,14 +14,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: '[debug] Print start-up data'
-        if: ${{ inputs.debug }}
+        if: inputs.debug
         run: |
           echo "Triggered by: ${{ github.event_name }}"
           echo "Branch: ${{ github.ref }}"
           echo "Commit SHA: ${{ github.sha }}"
           echo "Runner OS: ${{ runner.os }}"
       - name: "[debug] Print when triggered from main"
-        if: ${{ inputs.debug && github.ref == 'refs/heads/main' }}
+        # This conditional runs the job/step only when:
+        # 1. The 'debug' input is set to true
+        # 2. AND the workflow is triggered on the 'main' branch
+        # The 'if' condition uses a logical AND operator (&&) to combine multiple expressions
+        #
+        # Alternative syntax for writing expressions:
+        # - Using 'success()' function: if: success() && inputs.debug && github.ref == 'refs/heads/main'
+        # - Using 'contains()' function: if: inputs.debug && contains(github.ref, 'main')
+        # - Using 'startsWith()' function: if: inputs.debug && startsWith(github.ref, 'refs/heads/main')
+        # - Using 'fromJson()' for complex conditions: if: fromJson('{"debug": true}').debug && github.ref == 'refs/heads/main'
+        # - Nested conditions: if: ${{ inputs.debug && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
+        if: inputs.debug && github.ref == 'refs/heads/main'
         run: |
           echo "This workflow was triggered from the main branch."
       - name: Greeting
