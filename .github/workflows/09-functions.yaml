@@ -15,7 +15,7 @@ jobs:
         if: failure()
         run: echo "This step will execute if any previous step fails."
       - name: I will execute
-        if: always()
+        if: !cancelled()
         run: echo "This step will execute regardless of the previous steps' outcomes."
       - name: I will execute when cancelled
         if: cancelled()
