@@ -15,6 +15,24 @@ jobs:
         run: echo "Linting and building project"
   unit-tests:
     runs-on: ubuntu-latest
+    # continue-on-error: Specifies whether a job or step should continue execution
+    # even if it fails. When set to true, subsequent steps or jobs will proceed
+    # normally despite the failure. Useful for non-critical steps or to ensure
+    # cleanup tasks always run.
+    # continue-on-error: Allows a job or step to continue execution even if it fails.
+    # When set to true, a failed step will not cause the job to fail, and subsequent
+    # steps will continue to execute normally. The job status will still be marked as failed,
+    # but it won't block dependent jobs.
+    #
+    # Difference between continue-on-error and !cancelled():
+    # - continue-on-error: Prevents a FAILED step from failing the entire job.
+    #   Subsequent steps execute regardless of the step's failure.
+    # - !cancelled(): A conditional expression that checks if the workflow was NOT cancelled.
+    #   It's used in step conditions (if:) to skip a step only if the workflow was cancelled.
+    #   It does NOT prevent failure - it only allows conditional execution based on cancellation status.
+    #
+    # In summary: continue-on-error ignores failures, while !cancelled() checks cancellation state.
+    # continue-on-error: true
     steps:
       - name: Running unit tests
         run: echo "Running tests..."
