@@ -9,14 +9,14 @@ jobs:
       - name: Failing step
         run: exit 1
       - name: I will be skipped
-        if: success()
+        if: ${{ success() }}
         run: echo "This step will execute only if the previous step succeeds."
       - name: I will execute
-        if: failure()
+        if: ${{ failure() }}
         run: echo "This step will execute if any previous step fails."
       - name: I will execute
-        if: !cancelled()
+        if: ${{ !cancelled() }}
         run: echo "This step will execute regardless of the previous steps' outcomes."
       - name: I will execute when cancelled
-        if: cancelled()
+        if: ${{ cancelled() }}
         run: echo "This step will execute only if the workflow run is cancelled."
