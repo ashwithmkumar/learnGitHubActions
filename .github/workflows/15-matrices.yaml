@@ -4,7 +4,8 @@ on:
 
 jobs:
   backward-compatibility:
-    runs-on: ubuntu-latest
+    # Specifies the runner environment where the job will execute.
+    runs-on: ${{ matrix.operating-system }}
     name: ${{ matrix.node-version }} - ${{ matrix.operating-system }}
     strategy:
       matrix:
