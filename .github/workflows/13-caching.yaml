@@ -6,8 +6,16 @@ on:
         description: Whether to use caching in the workflow
         type: boolean
         default: true
+      node-version:
+        description: Node version to use for the build and test steps
+        type: choice
+        options:
+          - 18.x
+          - 20.x
+          - 21.x
+        default: 20.x
 jobs:
-  build:
+  install-deps:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -18,16 +26,71 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: ${{ inputs.node-version }}
+      - name: Calculate cache key
+        id: cache-key
+        run: |
+          echo "Calculating cache key based on package-lock.json"
+          echo "CACHE_KEY=deps-node-modules-$(sha256sum package-lock.json | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+      - name: Download cached dependencies
+        id: cache
+        if: ${{ inputs.use-cache }}
+        uses: actions/cache@v3
+        with:
+          path: 13-caching/react-app/node_modules
+          key: ${{ steps.cache-key.outputs.CACHE_KEY }}
       - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           npm ci
-      - name: Testing
-        run: |
-          npm run test
+    # Required only if another job accesses this via needs.install-deps.outputs.CACHE_KEY.
+    # Not required when using steps.cache-key.outputs.CACHE_KEY within this same job.
+    outputs:
+      deps-cache-key: ${{ steps.cache-key.outputs.CACHE_KEY }}
+  build:
+    runs-on: ubuntu-latest
+    needs: install-deps
+    defaults:
+      run:
+        working-directory: 13-caching/react-app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: Download cached dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: 13-caching/react-app/node_modules
+          key: ${{ needs.install-deps.outputs.deps-cache-key }}
       - name: Building
         run: |
           npm run build
-      - name: Deploying to nonprod
+  linting:
+    runs-on: ubuntu-latest
+    needs: install-deps
+    defaults:
+      run:
+        working-directory: 13-caching/react-app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: Download cached dependencies
+        id: cache
+        uses: actions/cache@v3
+        with:
+          path: 13-caching/react-app/node_modules
+          key: ${{ needs.install-deps.outputs.deps-cache-key }}
+      - name: Testing
         run: |
-          echo "Deploying to nonprod"
+          npm run test
+      - name: Linting
+        run: |
+          echo "Linting..."
