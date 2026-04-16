@@ -57,10 +57,28 @@ jobs:
         color: [red, green]
         shape: [circle, square]
         size: [small, large]
+        # Includes additional matrix configurations that extend or override the base matrix combinations.
         include:
+          # When a new key is introduced in 'includes', it allows you to:
+          # 1. Add extra job configurations beyond the standard matrix product
+          # 2. Override specific matrix variable values for targeted job runs
+          # 3. Combine multiple matrix variables with custom key-value pairs
+          # In this example, 'opacity: 50' adds a new variable to selected matrix combinations,
+          # enabling fine-grained control over which jobs receive which configuration values.
           - opacity: 50
-            color: red
+          - color: red
             shape: triangle
+        # The 'exclude' keyword allows you to remove specific job configurations from a matrix strategy.
+        # It is processed after the matrix combinations are generated (before include), filtering out any combinations that match the specified criteria.
+        # exclude filters out any and all matrix combinations even if they are partially matched.
+        # For example, if you exclude color: green and shape: circle, any combination that includes both of those values will be excluded, regardless of the other matrix variables (size and opacity).
+        # Use case: If certain combinations of variables (e.g., color and shape) do not make sense for your tests, you can exclude them to avoid running unnecessary jobs. For instance, if you have a matrix that tests different colors and shapes, but the combination of green circles is not relevant for your testing scenario, you can use exclude to filter out that specific combination from the matrix.
+        exclude:
+          # Exclude specific matrix combinations that are not relevant or valid for testing.
+          # Use case: If certain combinations of variables (e.g., color and shape) do not make sense for your tests,
+          # you can exclude them to avoid running unnecessary jobs.
+          - color: green
+            shape: circle
     steps:
       - name: Dummy step
         run: |
