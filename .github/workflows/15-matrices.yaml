@@ -49,4 +49,18 @@ jobs:
       - name: Perform some tests
         run: |
           echo "Running tests on OS ${{ matrix.operating-system }} and NodeJS ${{ matrix.node-version }}"
-    
+  include-example:
+    name: ${{ matrix.color }} - ${{ matrix.shape }} - ${{ matrix.size }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        color: [red, green]
+        shape: [circle, square]
+        size: [small, large]
+        include:
+          - color: red
+            shape: triangle
+    steps:
+      - name: Dummy step
+        run: |
+          echo "Testing combination: Color=${{ matrix.color }}, Shape=${{ matrix.shape }}, Size=${{ matrix.size }}"
