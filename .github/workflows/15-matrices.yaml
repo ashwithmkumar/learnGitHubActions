@@ -14,6 +14,14 @@ jobs:
       # Set to false if you want all matrix jobs to complete regardless of individual failures.
       # fail-fast Documentation
       # The default value for fail-fast is true, meaning that if any job in the matrix fails, all other jobs that are still running will be cancelled immediately. Setting fail-fast to false allows all jobs to run to completion even if one or more jobs fail.
+      # fail-fast: true
+      # When set to true, GitHub Actions cancels all in-progress jobs if any matrix job fails.
+      # However, some jobs may still show as "passed" instead of "cancelled" in these cases:
+      # 1. Jobs that completed successfully before the failing job started
+      # 2. Jobs running on different runners with network latency in cancellation signals
+      # 3. Jobs in the final stages of completion when cancellation is triggered
+      # 4. Jobs that don't poll for cancellation signals frequently enough
+      # 5. Concurrent jobs that started before failure detection but completed during cancellation
       fail-fast: true
       matrix:
         node-version: [18.x, 20.x, 21.x]
