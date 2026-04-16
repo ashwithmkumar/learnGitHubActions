@@ -50,7 +50,7 @@ jobs:
         run: |
           echo "Running tests on OS ${{ matrix.operating-system }} and NodeJS ${{ matrix.node-version }}"
   include-example:
-    name: ${{ matrix.color }} - ${{ matrix.shape }} - ${{ matrix.size }}
+    name: ${{ matrix.color }} - ${{ matrix.shape }} - ${{ matrix.size }} - ${{ matrix.opacity }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -58,9 +58,10 @@ jobs:
         shape: [circle, square]
         size: [small, large]
         include:
-          - color: red
+          - opacity: 50
+            color: red
             shape: triangle
     steps:
       - name: Dummy step
         run: |
-          echo "Testing combination: Color=${{ matrix.color }}, Shape=${{ matrix.shape }}, Size=${{ matrix.size }}"
+          echo "Testing combination: Color=${{ matrix.color }}, Shape=${{ matrix.shape }}, Size=${{ matrix.size }}, Opacity=${{ matrix.opacity }}"
