@@ -1,5 +1,6 @@
 # dependencies
 node_modules/
+!.github/actions/**/node_modules/
 
 # build and test output
 build/

@@ -1,0 +1,6 @@
+name: Update NPM dependencies
+description: A GitHub Action to check and update NPM dependencies in a project and create a pull request with the updated package.json and package*.json files.
+
+runs:
+  using: node20
+  main: index.js
