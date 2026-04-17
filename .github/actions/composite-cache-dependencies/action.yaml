@@ -1,0 +1,32 @@
+name: Cache Node and NPM dependencies
+description: Caches Node and NPM dependencies based on the package-lock.json file using GitHub Actions cache
+
+inputs:
+  node-version:
+    description: 'Node.js version to use for caching dependencies'
+    required: true
+    default: '24.x'
+  working-directory:
+    description: 'Working directory where package-lock.json is located'
+    required: false
+    default: '.'
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Node.js ${{ inputs.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+    - name: Cache dependencies
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ inputs.working-directory }}/node_modules
+        key: deps-node-modules-${{ hashFiles('${{ inputs.working-directory }}/package-lock.json') }}
+    - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: |
+        npm ci
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
