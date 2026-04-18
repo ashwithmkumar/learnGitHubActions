@@ -1,4 +1,15 @@
 const core = require('@actions/core');
+const exec = require('@actions/exec');
+
+const validateBranchName = ({branchName}) => {
+  const branchNameRegex = /^[a-zA-Z0-9._-]+$/;
+  return branchNameRegex.test(branchName);
+}
+
+const validateDirectoryName = ({directoryName}) => {
+  const directoryNameRegex = /^[a-zA-Z0-9_-/]+$/;
+  return directoryNameRegex.test(directoryName);
+}
 
 async function run(params) {
   /*
@@ -17,6 +28,43 @@ async function run(params) {
     5. If there are no changes, log that dependencies are up to date and exit.
   */
   core.info('Starting the JS dependency update action...');
+
+  const baseBranch = core.getInput('base-branch');
+  const targetBranch = core.getInput('target-branch');
+  const githubToken = core.getInput('github-token');
+  const workingDirectory = core.getInput('working-directory');
+  const debug = core.getBooleanInput('debug');
+
+  core.setSecret(githubToken);
+
+  if (debug) {
+    core.info(`[js-dependency-update] Base branch: ${baseBranch}`);
+    core.info(`[js-dependency-update] Target branch: ${targetBranch}`);
+    core.info(`[js-dependency-update] Working directory: ${workingDirectory}`);
+  }
+
+  if (!validateBranchName({ branchName: baseBranch })) {
+    core.setFailed(`Invalid base branch name: ${baseBranch}. Branch names can only contain letters, numbers, dots, underscores, and hyphens.`);
+    return;
+  }
+  if (!validateBranchName({ branchName: targetBranch })) {
+    core.setFailed(`Invalid target branch name: ${targetBranch}. Branch names can only contain letters, numbers, dots, underscores, and hyphens.`);
+    return;
+  }
+  if (!validateDirectoryName({ directoryName: workingDirectory })) {
+    core.setFailed(`Invalid working directory name: ${workingDirectory}. Directory names can only contain letters, numbers, underscores, hyphens, and slashes.`);
+    return;
+  }
+
+  await exec.exec('npm update', [], { cwd: workingDirectory });
+
+  const gitStatusOutput = await exec.getExecOutput('git status -s package*.json', [], { cwd: workingDirectory });
+  if (gitStatusOutput.stdout.trim() != '') {
+    core.info('[js-dependency-update] Changes detected in package.json or package-lock.json. Committing changes and creating pull request...');
+  } else {
+    core.info('[js-dependency-update] No changes detected in package.json or package-lock.json. Dependencies are up to date.');
+  }
+
 }
 
 run()

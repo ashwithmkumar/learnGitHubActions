@@ -1,6 +1,26 @@
 name: Update NPM dependencies
 description: A GitHub Action to check and update NPM dependencies in a project and create a pull request with the updated package.json and package*.json files.
 
+inputs:
+  base-branch:
+    description: The base branch to create the pull request against
+    required: false
+    default: main
+  target-branch:
+    description: The target branch to create the pull request from
+    required: false
+    default: dependency-update
+  working-directory:
+    description: The working directory where the package.json file is located
+    required: true
+  github-token:
+    description: GitHub token with permissions to write content and create pull requests
+    required: true
+  debug:
+    description: Enable debug logging to the console
+    required: false
+    default: false
+
 runs:
   using: node20
   main: index.js

@@ -1,7 +1,20 @@
 name: 17-2 Custom Actions - JS Dependency Update
-run-name: 17-2 Custom Actions - JS Dependency Update
+run-name: 17-2 Custom Actions - JS Dependency Update | BB - ${{ inputs.base-branch }} | TB - ${{ inputs.target-branch }} | WD - ${{ inputs.working-directory }}
 on:
   workflow_dispatch:
+    inputs:
+      base-branch:
+        description: 'The base branch to create the pull request against'
+        required: false
+        default: 'main'
+      target-branch:
+        description: 'The target branch to create the pull request from'
+        required: false
+        default: 'dependency-update'
+      working-directory:
+        description: 'The working directory where the package.json file is located'
+        required: true
+        default: '17-custom-actions/react-app'
 
 jobs:
   dependency-update:
@@ -11,3 +24,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Check for dependency updates and create pull request
         uses: ./.github/actions/js-dependency-update
+        with:
+          base-branch: ${{ inputs.base-branch }}
+          target-branch: ${{ inputs.target-branch }}
+          working-directory: ${{ inputs.working-directory }}
