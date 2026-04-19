@@ -1,5 +1,6 @@
 const core = require('@actions/core');
 const exec = require('@actions/exec');
+const github = require('@actions/github');
 
 const validateBranchName = ({branchName}) => {
   const branchNameRegex = /^[a-zA-Z0-9._-]+$/;
@@ -35,6 +36,10 @@ async function run(params) {
   const workingDirectory = core.getInput('working-directory');
   const debug = core.getBooleanInput('debug');
 
+  const commonExecOptions = { 
+    cwd: workingDirectory
+  };
+
   core.setSecret(githubToken);
 
   if (debug) {
@@ -56,11 +61,45 @@ async function run(params) {
     return;
   }
 
-  await exec.exec('npm update', [], { cwd: workingDirectory });
+  await exec.exec('npm update', [], {
+    ...commonExecOptions
+  });
 
-  const gitStatusOutput = await exec.getExecOutput('git status -s package*.json', [], { cwd: workingDirectory });
+  const gitStatusOutput = await exec.getExecOutput('git status -s package*.json', [], {
+    ...commonExecOptions
+  });
   if (gitStatusOutput.stdout.trim() != '') {
     core.info('[js-dependency-update] Changes detected in package.json or package-lock.json. Committing changes and creating pull request...');
+    await exec.exec(`git config --global user.name "gh-automation"`);
+    await exec.exec(`git config --global user.email "gh-automation@example.com"`);
+    await exec.exec(`git checkout -b ${targetBranch}`, [], {
+      ...commonExecOptions
+    });
+    await exec.exec(`git add package.json package-lock.json`, [], {
+      ...commonExecOptions
+    });
+    await exec.exec(`git commit -m "Update dependencies"`, [], {
+      ...commonExecOptions
+    });
+    await exec.exec(`git push -u origin ${targetBranch} --force`, [], {
+      ...commonExecOptions
+    });
+    // Create pull request using octokit API
+    const octokit = github.getOctokit(githubToken);
+    
+    try {
+      await octokit.rest.pulls.create({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        title: `Update dependencies - ${targetBranch}`,
+        body: `This pull request updates the dependencies in package.json and package-lock.json.`,
+        head: targetBranch,
+        base: baseBranch
+      });
+    } catch (error) {
+      core.error(`[js-dependency-update] Failed to create pull request`);
+      core.setFailed(`[js-dependency-update] ${error.message}`);
+    }
   } else {
     core.info('[js-dependency-update] No changes detected in package.json or package-lock.json. Dependencies are up to date.');
   }
