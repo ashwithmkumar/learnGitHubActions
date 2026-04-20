@@ -68,7 +68,10 @@ async function run(params) {
   const gitStatusOutput = await exec.getExecOutput('git status -s package*.json', [], {
     ...commonExecOptions
   });
+
+  let updatesAvailable = 'false';
   if (gitStatusOutput.stdout.trim() != '') {
+    updatesAvailable = 'true';
     core.info('[js-dependency-update] Changes detected in package.json or package-lock.json. Committing changes and creating pull request...');
     await exec.exec(`git config --global user.name "gh-automation"`);
     await exec.exec(`git config --global user.email "gh-automation@example.com"`);
@@ -103,6 +106,9 @@ async function run(params) {
   } else {
     core.info('[js-dependency-update] No changes detected in package.json or package-lock.json. Dependencies are up to date.');
   }
+
+  core.info(`Setting output "updates-available" to ${updatesAvailable}`);
+  core.setOutput('updates-available', updatesAvailable);
 
 }
 

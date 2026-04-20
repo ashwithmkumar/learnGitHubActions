@@ -21,6 +21,11 @@ inputs:
     required: false
     default: false
 
+outputs:
+  updates-available:
+    description: Indicates whether any dependencies were updated (true/false)
+    value: ${{ steps.check-updates.outputs.updates-available }}
+
 runs:
   using: node20
   main: index.js

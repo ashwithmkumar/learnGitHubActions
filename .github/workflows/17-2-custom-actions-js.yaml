@@ -27,9 +27,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Check for dependency updates and create pull request
+        id: update-deps
         uses: ./.github/actions/js-dependency-update
         with:
           base-branch: ${{ inputs.base-branch }}
           target-branch: ${{ inputs.target-branch }}
           working-directory: ${{ inputs.working-directory }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Output whether updates were available
+        run: |
+          echo "Updates available: ${{ steps.update-deps.outputs.updates-available }}"
