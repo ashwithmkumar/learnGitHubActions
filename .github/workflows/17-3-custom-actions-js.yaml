@@ -27,8 +27,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Ping URL
+        id: ping-url
         uses: ./.github/actions/docker-ping-url
         with:
           url: ${{ inputs.url }}
           max_retries: ${{ inputs.max_retries }}
           delay_interval: ${{ inputs.delay_interval }}
+      - name: Output URL status
+        run: |
+          echo "URL Status: ${{ steps.ping-url.outputs.url_status }}"

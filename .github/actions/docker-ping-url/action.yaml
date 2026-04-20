@@ -35,6 +35,10 @@ inputs:
     required: false
     default: 5
 
+outputs:
+  url_status: # OUTPUT_URL_STATUS
+    description: The final status of the URL after pinging
+
 runs:
   using: docker
   image: Dockerfile

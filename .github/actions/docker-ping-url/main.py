@@ -7,6 +7,9 @@ def run():
   max_retries = os.getenv("INPUT_MAX_RETRIES", "10")
 
   website_reachable = ping_url(url, delay, max_retries)
+
+  set_output(os.getenv("GITHUB_OUTPUT"), "url_status", str(website_reachable))
+
   if not website_reachable:
     raise Exception(f"Failed to ping {url} after {max_retries} attempts.")
   
@@ -32,6 +35,10 @@ def ping_url(url, delay, max_retries):
       print("Please provide a valid URL (e.g., https://www.google.com)")
       return False
   return False
+
+def set_output(file_path, key, value):
+  with open(file_path, 'a') as f:
+    print(f"{key}={value}\n", file=f)
 
 if __name__ == "__main__":
   run()
