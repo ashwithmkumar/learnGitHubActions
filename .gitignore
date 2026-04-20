@@ -1,6 +1,7 @@
 # dependencies
 node_modules/
 !.github/actions/**/node_modules/
+venv/
 
 # build and test output
 build/
