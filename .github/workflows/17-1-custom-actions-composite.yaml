@@ -22,11 +22,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Setup Node.js and cache dependencies using composite action
+        id: setup-deps
         uses: ./.github/actions/composite-cache-dependencies
         with:
           node-version: '24.x'
           working-directory: ${{ env.working-directory }}
           target-environment: ${{ github.event.inputs.target-environment }}
+      - name: Print whether dependencies were installed or restored from cache
+        run: |
+          if [ "${{ steps.setup-deps.outputs.installed-deps }}" = "true" ]; then
+            echo "Dependencies were installed."
+          else
+            echo "Dependencies were restored from cache."
+          fi
       - name: Test
         run: |
           npm test
