@@ -1,15 +1,36 @@
 name: Ping URL
 description: A GitHub Action to ping a specified URL and check its availability until maximum retries are reached.
 
+# Docker Custom Action Input Handler
+#
+# This module handles input variables for Docker-based custom actions.
+#
+# Important Note:
+# Unlike JavaScript custom actions, Docker custom actions do not have the option
+# to fetch input variables using core or action packages. Instead, input variables
+# are automatically available as environment variables in a specific format that
+# can be directly accessed by the Python main file.
+#
+# The environment variables follow the naming convention:
+# - INPUT_<VARIABLE_NAME> (converted to uppercase)
+# - Special characters in variable names are converted to underscores
+#
+# These environment variables can be accessed using:
+# - os.environ.get('INPUT_VARIABLE_NAME')
+# - os.getenv('INPUT_VARIABLE_NAME')
+#
+# Example:
+#   For an input named 'api_key', it will be available as 'INPUT_API_KEY'
+#   in the environment variables.
 inputs:
-  url:
+  url: # INPUT_URL
     description: The URL to ping
     required: true
-  max-retries:
+  max_retries: # INPUT_MAX_RETRIES
     description: The maximum number of retries to ping the URL
     required: false
     default: 10
-  delay-interval:
+  delay_interval: # INPUT_DELAY_INTERVAL
     description: The interval (in seconds) between retries
     required: false
     default: 5
