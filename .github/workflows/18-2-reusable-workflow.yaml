@@ -13,10 +13,10 @@ jobs:
     steps:
       - name: Print Build Status
         run: |
-          echo "Build Status: ${{ needs.deploy.outputs.build-status }}"
+          echo "Build Status: ${{ needs.call-reusable-workflow.outputs.build-status }}"
       - name: Print Deploy Status
         run: |
-          echo "Deploy Status: ${{ needs.deploy.outputs.deploy-status }}"
+          echo "Deploy Status: ${{ needs.call-reusable-workflow.outputs.deploy-status }}"
       - name: Print URL
         run: |
-          echo "Deployed URL: ${{ needs.deploy.outputs.url }}"
+          echo "Deployed URL: ${{ needs.call-reusable-workflow.outputs.url }}"
