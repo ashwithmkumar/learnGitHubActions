@@ -1,0 +1,43 @@
+name: 18.1 - Reusable Workflows - Defining a Reusable Workflow
+
+on:
+  workflow_call:
+    inputs:
+      target-directory:
+        description: 'The directory to deploy to'
+        required: true
+        type: string
+    outputs:
+      build-status:
+        description: 'The status of the build'
+        value: ${{ jobs.deploy.outputs.build-status }}
+      deploy-status:
+        description: 'The status of the deployment'
+        value: ${{ jobs.deploy.outputs.deploy-status }}
+      url:
+        description: 'The URL of the deployed application'
+        value: ${{ jobs.deploy.outputs.url }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    outputs:
+      build-status: ${{ steps.build.outputs.build-status }}
+      url: ${{ steps.deploy.outputs.url }}
+      deploy-status: ${{ steps.deploy.outputs.deploy-status }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Build
+        id: build
+        run: |
+          echo "Building the project using the target directory: ${{ inputs.target-directory }}..."
+          echo "Build complete!"
+          echo "build-status=success" >> "$GITHUB_OUTPUT"
+      - name: Deploy
+        id: deploy
+        run: |
+          echo "Deploying the build artifact..."
+          echo "Deployment complete!"
+          echo "deploy-status=success" >> "$GITHUB_OUTPUT"
+          echo "url=https://examp.com" >> "$GITHUB_OUTPUT"
