@@ -3,12 +3,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  call-reusable-workflow
+  call-reusable-workflow:
     uses: ./.github/workflows/18-1-reusable-workflow.yaml
     with:
       target-directory: 'dist'
   print-results:
-    needs: deploy
+    needs: call-reusable-workflow
     runs-on: ubuntu-latest
     steps:
       - name: Print Build Status
