@@ -6,6 +6,7 @@ on:
 # This workflow demonstrates how to safely access the PR title without risking command injection.
 # In the "unsafe-pr" job, the PR title is accessed directly in the shell command, which can be exploited if the title contains malicious code.
 # In contrast, the "safer-pr" job uses an environment variable to access the PR title, which prevents any potential command injection attacks.
+# The "js-safer-pr" job demonstrates how to use a custom GitHub Action that safely checks the PR title using Node.js, further reducing the risk of command injection.
 
 jobs:
   unsafe-pr:
