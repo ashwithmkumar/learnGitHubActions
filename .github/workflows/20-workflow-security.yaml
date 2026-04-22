@@ -5,8 +5,14 @@ on:
 # Context: GitHub allows you to execute commands in its PR name, which can lead to security vulnerabilities if not handled properly.
 # This workflow demonstrates how to safely access the PR title without risking command injection.
 # In the "unsafe-pr" job, the PR title is accessed directly in the shell command, which can be exploited if the title contains malicious code.
+
 # In contrast, the "safer-pr" job uses an environment variable to access the PR title, which prevents any potential command injection attacks.
+
 # The "js-safer-pr" job demonstrates how to use a custom GitHub Action that safely checks the PR title using Node.js, further reducing the risk of command injection.
+# In this case, we replace the inlne shell script with a custom JavaScript action that fetches inputs via the core API, bypassing the bash entirely.
+
+# In short, GitHub context expression is interpolated directly into the script string before execution, allowing an attacker to insert semicolons or other shell metacharacters and execute arbitrary shell commands via the PR title.
+# To mitigate this risk, it's crucial to avoid directly interpolating untrusted input into shell commands and instead use environment variables or custom actions that handle the input safely.
 
 jobs:
   unsafe-pr:
