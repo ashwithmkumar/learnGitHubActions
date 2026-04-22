@@ -1,7 +1,10 @@
-name: 19 - Managing Concurrency
+name: 19 - 1 - Managing Concurrency
 on:
   workflow_dispatch:
 
+# This workflow demonstrates how to manage concurrency in GitHub Actions at workflow level.
+# It ensures that only one instance of this workflow runs at a time for a given branch or tag.
+# If another instance is triggered while one is already running, the new instance will be queued until the current one finishes.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
