@@ -1,0 +1,11 @@
+name: Safe Title Check
+description: A GitHub Action to safely check the PR title without risking command injection.
+
+inputs:
+  title:
+    description: 'The title of the pull request'
+    required: true
+
+runs:
+  using: 'node24'
+  main: 'index.js'
